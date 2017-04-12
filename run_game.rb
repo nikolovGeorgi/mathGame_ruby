@@ -1,75 +1,73 @@
 require 'colorize'
 require_relative 'player'
 require_relative 'math_generator'
+require_relative 'report'
 
+# Instancing classes
+r = Report.new
+
+# setting game rules
 @turn = 1
 @game_running = true;
-puts "Welcome to Math Generator!"
 
-print "Enter Player 1's name: "
+r.game_start
+r.input_player_name(1)
 @user_name = gets.chomp
 player1 = Player.new(@user_name)
 player1.name = player1.name.colorize(:blue)
 
-
-print "Enter Player 2's name: "
+r.input_player_name(2)
 @user_name = gets.chomp
 player2 = Player.new(@user_name)
 player2.name = player2.name.colorize(:red)
 
-
-puts "\nGood Game & Have Fun!\n"
+r.gg_hf
 
 while @game_running
   question = Math_generator.new
 
   case @turn
   when 1
-    print "#{player1.name}: "
+    r.player_turn(player1.name)
   when 2
-    print "#{player2.name}: "
+    r.player_turn(player2.name)
   end
 
   print question.generate_question
   @input = gets.chomp.to_i
 
   if @turn == 1 && question.check_answer?(@input)
-    puts "Good Job! You got it right!".colorize(:purple)
+    r.success
     player1.get_point
     @turn += 1
   elsif @turn == 1 && !question.check_answer?(@input)
-    puts "Wrong!".colorize(:black)
+    r.fails
     player1.decrease_life
     @turn += 1
   elsif @turn == 2 && question.check_answer?(@input)
-    puts "Good Job! You got it right!".colorize(:black)
+    r.success
     player2.get_point
     @turn -= 1
   elsif @turn == 2 && !question.check_answer?(@input)
-    puts "Wrong!".colorize(:black)
+    r.fails
     player2.decrease_life
     @turn -= 1
   end
 
-  puts
-  puts "The score so far:
-  #{player1.name}: #{player1.correct_answers} Correct Answers #{player1.life} Remaining Lives
-  #{player2.name}: #{player2.correct_answers} Correct Answers #{player2.life} Remaining Lives"
-  puts
+  r.current_score
+  r.score_keeping_for_player(player1)
+  r.score_keeping_for_player(player2)
 
   if player1.life <= 0 || player2.life <= 0
-    puts "Game OVER."
+    r.game_over
+    r.final_score
+    r.score_keeping_for_player(player1)
+    r.score_keeping_for_player(player2)
     if player1.life <= 0
-      puts "The winner is #{player2.name}"
+      r.winner(player2)
     elsif player2.life <= 0
-      puts "The winner is #{player1.name}"
+      r.winner(player1)
     end
-    puts "The final score was:
-    #{player1.name}: #{player1.correct_answers} Correct Answers #{player1.life} Remaining Lives
-    #{player2.name}: #{player2.correct_answers} Correct Answers #{player2.life} Remaining Lives"
     @game_running = false
   end
-
-
-  @game_running = true
 end

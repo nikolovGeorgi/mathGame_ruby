@@ -63,18 +63,18 @@ class Report
 #-----
   def final_score
     puts
-    puts "The final score is: ".cyan
+    puts "The final score is: ".cyan.bold
   end
 #-----
   def winner(player)
     puts
-    puts "THE WINNER IS: #{player.name}"
+    puts "THE WINNER IS: #{player.name}".bold
     puts "--------------------------------------"
   end
 #-----
   def game_over
     puts "--------------------------------------"
-    puts "GAME OVER!".red
+    puts "GAME OVER!".red.bold
   end
 #-----
 end
